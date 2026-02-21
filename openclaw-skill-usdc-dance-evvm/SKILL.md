@@ -45,7 +45,7 @@ Enables OpenClaw agents to pay with **USDC.k** (USDC Krump) via the **x402 proto
 EVVM Core moves **internal ledger balances**; it does not pull tokens from the wallet. For the **EVVM Native x402 adapter**, the payer must deposit USDC.k into EVVM first (in `lz-bridge`):
 
 ```bash
-cd "LayerZero - Story Aeneid/lz-bridge"
+cd lz-bridge
 PRIVATE_KEY=0x<payer_key> DEPOSIT_AMOUNT=1000000 npm run evvm:deposit-usdck
 ```
 

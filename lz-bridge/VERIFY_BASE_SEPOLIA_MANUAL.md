@@ -12,7 +12,7 @@ Since BaseScan requires Etherscan API V2 and Hardhat's verify plugin hasn't full
 ### 1. Get Standard JSON Input
 
 ```bash
-cd "/Users/openclaw/Documents/USDC Krump/LayerZero - Story Aeneid/lz-bridge"
+cd lz-bridge
 npm run build
 ```
 

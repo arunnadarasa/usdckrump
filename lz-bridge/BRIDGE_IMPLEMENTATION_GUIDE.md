@@ -203,7 +203,7 @@ Run both when using the custom endpoint; public LayerZero relayers do not watch 
 ### 9.2 GitHub
 
 - **.gitignore:** Ignore `.env`, `node_modules/`, `deployments/*.json` (or only track `*-latest.json` if you want), `.cursor/debug.log`, and any local keys or credentials.
-- **README and docs:** Keep one main README at the repo root with project structure, two-bridge overview, quick start (custom bridge + LZ), and links to verification and deployment docs. Use relative links and correct paths (e.g. `LayerZero - Story Aeneid/lz-bridge/...`) so they work from the repo root.
+- **README and docs:** Keep one main README at the repo root with project structure, two-bridge overview, quick start (custom bridge + LZ), and links to verification and deployment docs. Use relative links and correct paths (e.g. `lz-bridge/...`) so they work from the repo root.
 - **Commits:** Prefer small, logical commits (e.g. "fix: executor double-execute by re-checking inboundNonce before send"). Merge main into your branch before pushing to avoid unrelated-history merges when possible.
 - **Secrets:** Never commit `.env` or hardcoded keys. Use GitHub Actions secrets or Fly.io secrets for CI and production; document which env vars are required in README or CONTRIBUTING.
 

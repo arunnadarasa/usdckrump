@@ -1,6 +1,6 @@
 ---
 name: usdc-dance-evvm-payment
-description: Pay with USDC Krump (USDC.k) via x402 on Story Aeneid EVVM. Supports EVVM Native adapter (no EIP-3009 on token) and legacy Bridge adapter. Privy or private key.
+description: Pay with USDC Krump (USDC.k) via x402 on Story Aeneid EVVM. Supports EVVM Native adapter (no EIP-3009 on token) and legacy Bridge adapter. Requires PRIVY_APP_ID and PRIVY_APP_SECRET (or private key for legacy path); credentials are user-supplied, not stored by the skill.
 version: 1.2.0
 author: OpenClaw USDC Krump
 tags: [payment, evvm, x402, usdc, layerzero, story-aeneid, openclaw, privy, bridge, usdc-krump]
@@ -10,6 +10,17 @@ requires: [privy]
 # USDC Krump (USDC.k) EVVM Payment Skill
 
 Enables OpenClaw agents to pay with **USDC Krump (USDC.k)** via the **x402 protocol** on **Story Aeneid EVVM**, using **Privy server wallets** or a private key.
+
+## Scope
+
+This skill provides **instructions and parameter reference** for USDC Krump (USDC.k) payments via x402 on Story Aeneid. Executable code, examples, and scripts (e.g. EVVM deposit, two-agent flows) live in the full [USDC Krump repository](https://github.com/arunnadarasa/usdckrump); use that repo to run scripts or integrate the payment logic. Only create wallets or initiate payments when the user has **explicitly requested** a payment and the required credentials are configured.
+
+## Required credentials
+
+The skill **does not store or provide** credentials. You must supply one of:
+
+- **Privy (recommended):** Set `PRIVY_APP_ID` and `PRIVY_APP_SECRET` (e.g. in `~/.openclaw/openclaw.json` under `env.vars`, or as environment variables). Get these from [dashboard.privy.io](https://dashboard.privy.io).
+- **Legacy / private key:** For the legacy `payViaEVVM` path, the payer private key must be supplied (e.g. `AGENT_PRIVATE_KEY`). Prefer Privy-managed wallets over raw private keys; do not store private keys in plain environment variables if avoidable.
 
 ## Features
 
@@ -23,9 +34,9 @@ Enables OpenClaw agents to pay with **USDC Krump (USDC.k)** via the **x402 proto
 
 ## Prerequisites
 
-1. **Privy Account**: Get credentials from [dashboard.privy.io](https://dashboard.privy.io)
-2. **Privy Skill Installed**: `clawhub install privy`
-3. **OpenClaw Config**: Add Privy credentials to `~/.openclaw/openclaw.json`:
+1. **Privy account** (for Privy path): Get credentials from [dashboard.privy.io](https://dashboard.privy.io).
+2. **Privy skill installed**: `clawhub install privy`
+3. **OpenClaw config**: Add the required credentials (see **Required credentials** above). For Privy, add to `~/.openclaw/openclaw.json`:
 
 ```json
 {
@@ -42,7 +53,7 @@ Enables OpenClaw agents to pay with **USDC Krump (USDC.k)** via the **x402 proto
 
 ### EVVM deposit before using Native adapter
 
-EVVM Core moves **internal ledger balances**; it does not pull tokens from the wallet. For the **EVVM Native x402 adapter**, the payer must deposit USDC.k into EVVM first (in `lz-bridge`):
+EVVM Core moves **internal ledger balances**; it does not pull tokens from the wallet. For the **EVVM Native x402 adapter**, the payer must deposit USDC.k into EVVM first. **Run this in the full USDC Krump repo** (clone from [github.com/arunnadarasa/usdckrump](https://github.com/arunnadarasa/usdckrump)):
 
 ```bash
 cd lz-bridge
@@ -52,6 +63,8 @@ PRIVATE_KEY=0x<payer_key> DEPOSIT_AMOUNT=1000000 npm run evvm:deposit-usdck
 Then use `useNativeAdapter: true` and the Native adapter address below.
 
 ### Option 1: Using Privy Wallet (Recommended)
+
+Code reference (implement in your environment or use the full repo’s `src/`):
 
 ```typescript
 import { payViaEVVMWithPrivy } from './src/index';
@@ -73,6 +86,8 @@ const receipt = await payViaEVVMWithPrivy({
 
 ### Option 2: Using Private Key (Legacy)
 
+Code reference (use the full repo’s `src/` when running):
+
 ```typescript
 import { payViaEVVM } from './src/index';
 
@@ -93,11 +108,13 @@ const receipt = await payViaEVVM({
 
 ### Two-agent native example
 
+In the **full USDC Krump repo**, run:
+
 ```bash
 AGENT_A_PRIVATE_KEY=0x... AGENT_B_ADDRESS=0x... npx tsx examples/two-agents-x402-native.ts
 ```
 
-See `examples/README-two-agents-x402.md` for direct x402 and legacy adapter flows.
+See the repo’s `examples/README-two-agents-x402.md` for direct x402 and legacy adapter flows.
 
 ## Configuration
 
@@ -164,31 +181,34 @@ Check if a payment was successfully processed.
 
 ## Examples
 
-See `examples/` directory for:
-- `two-agents-x402-native.ts` - Two agents with EVVM Native adapter (recommended)
-- `two-agents-x402-simulation.ts` - Two agents with legacy Bridge adapter
-- `two-agents-x402-direct.ts` - Direct x402 transfer (no EVVM)
-- `agent-payment-privy-example.ts` - Privy wallets
-- `agent-payment-example.ts` - Private keys (legacy)
+In the **full [USDC Krump repository](https://github.com/arunnadarasa/usdckrump)**, see the `examples/` directory:
 
-See `examples/README-two-agents-x402.md` for EVVM deposit step and all flows.
+- `two-agents-x402-native.ts` — Two agents with EVVM Native adapter (recommended)
+- `two-agents-x402-simulation.ts` — Two agents with legacy Bridge adapter
+- `two-agents-x402-direct.ts` — Direct x402 transfer (no EVVM)
+- `agent-payment-privy-example.ts` — Privy wallets
+- `agent-payment-example.ts` — Private keys (legacy)
+
+See the repo’s `examples/README-two-agents-x402.md` for the EVVM deposit step and all flows.
 
 ## Security Considerations
 
-⚠️ **Important**: When using Privy wallets:
+Credentials are **user-supplied only**; this skill does not store or transmit secrets. Only create wallets or initiate payments when the user has **explicitly requested** a payment and you have configured the required credentials (see **Required credentials**).
 
-1. **Set Policies**: Always configure spending limits and restrictions
-2. **Test First**: Test on testnet before using real funds
-3. **Monitor Activity**: Regularly check wallet activity in Privy dashboard
-4. **Rotate Credentials**: If compromised, rotate Privy App Secret immediately
+⚠️ **When using Privy wallets:**
+
+1. **Set policies**: Always configure spending limits and restrictions (e.g. max per transaction, whitelisted chains/contracts).
+2. **Test first**: Use testnet and minimal amounts before any mainnet or real funds.
+3. **Monitor activity**: Regularly check wallet activity in the Privy dashboard.
+4. **Rotate credentials**: If compromised, rotate Privy App Secret immediately.
+5. **Prefer Privy over raw keys**: Prefer Privy-managed wallets over supplying a private key; avoid storing private keys in plain environment variables.
 
 ## Requirements
 
-- Node.js 18+
-- ethers.js v6
-- Privy skill installed (`clawhub install privy`)
+- Node.js 18+, ethers.js v6 (when running code from the full repo)
+- Privy skill installed: `clawhub install privy`
 - Access to Story Aeneid RPC endpoint
-- Privy account with App ID and App Secret
+- Required credentials: `PRIVY_APP_ID` and `PRIVY_APP_SECRET` (Privy path), or payer private key (legacy path)
 
 ## License
 

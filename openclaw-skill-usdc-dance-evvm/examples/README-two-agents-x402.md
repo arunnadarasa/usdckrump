@@ -1,15 +1,15 @@
 # Two-agent x402 simulation
 
-Two scripts simulate **Agent A (Payer)** and **Agent B (Receiver)** with USDC.d and x402 (EIP-3009).
+Two scripts simulate **Agent A (Payer)** and **Agent B (Receiver)** with USDC Krump (USDC.k) and x402 (EIP-3009).
 
 ## 1. Direct x402 transfer (no EVVM)
 
 **Script:** `two-agents-x402-direct.ts`  
-**Flow:** Agent A signs EIP-3009 and sends USDC.d directly to Agent B via `BridgeUSDC.transferWithAuthorization`. No adapter, no EVVM.
+**Flow:** Agent A signs EIP-3009 and sends USDC.k directly to Agent B via `BridgeUSDC.transferWithAuthorization`. No adapter, no EVVM.
 
 ```bash
 AGENT_A_PRIVATE_KEY=0x... AGENT_B_ADDRESS=0x... npx tsx examples/two-agents-x402-direct.ts
-# Optional: PAYMENT_AMOUNT=500000  (0.5 USDC.d, 6 decimals)
+# Optional: PAYMENT_AMOUNT=500000  (0.5 USDC.k, 6 decimals)
 ```
 
 ## 2. Full x402 + EVVM (adapter + EVVM Core)

@@ -1,5 +1,5 @@
 /**
- * USDC.d EVVM Payment Skill for OpenClaw
+ * USDC Krump (USDC.k) EVVM Payment Skill for OpenClaw
  * Enables autonomous agent payments via x402 protocol on Story Aeneid EVVM
  * Supports both Privy server wallets and direct private key signing
  */
@@ -366,6 +366,7 @@ async function generateX402SignatureWithPrivy(options: {
     )
   );
 
+  // EIP-712 name must match EVVMNativeX402Adapter on-chain ("USDC Dance") for signature verification
   const domainSeparator = ethers.keccak256(
     ethers.AbiCoder.defaultAbiCoder().encode(
       ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],

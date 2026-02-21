@@ -1,6 +1,6 @@
-# USDC.d EVVM Payment Skill for OpenClaw
+# USDC Krump (USDC.k) EVVM Payment Skill for OpenClaw
 
-Enable autonomous agent payments with USDC.d via x402 protocol on Story Aeneid EVVM.
+Enable autonomous agent payments with USDC Krump (USDC.k) via x402 protocol on Story Aeneid EVVM.
 
 ## Installation
 

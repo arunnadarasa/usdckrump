@@ -1,15 +1,15 @@
 ---
 name: usdc-dance-evvm-payment
-description: Pay with USDC.k via x402 on Story Aeneid EVVM. Supports EVVM Native adapter (no EIP-3009 on token) and legacy Bridge adapter. Privy or private key.
+description: Pay with USDC Krump (USDC.k) via x402 on Story Aeneid EVVM. Supports EVVM Native adapter (no EIP-3009 on token) and legacy Bridge adapter. Privy or private key.
 version: 1.2.0
-author: LayerZero Story Aeneid Integration
+author: OpenClaw USDC Krump
 tags: [payment, evvm, x402, usdc, layerzero, story-aeneid, openclaw, privy, bridge, usdc-krump]
 requires: [privy]
 ---
 
-# USDC.k EVVM Payment Skill
+# USDC Krump (USDC.k) EVVM Payment Skill
 
-Enables OpenClaw agents to pay with **USDC.k** (USDC Krump) via the **x402 protocol** on **Story Aeneid EVVM**, using **Privy server wallets** or a private key.
+Enables OpenClaw agents to pay with **USDC Krump (USDC.k)** via the **x402 protocol** on **Story Aeneid EVVM**, using **Privy server wallets** or a private key.
 
 ## Features
 
@@ -137,7 +137,7 @@ The agent will create a Privy server wallet and return the wallet ID.
 
 Create spending limits and restrictions:
 
-> "Create a Privy policy that limits USDC.d payments to 10 USDC.d max per transaction"
+> "Create a Privy policy that limits USDC Krump (USDC.k) payments to 10 USDC.k max per transaction"
 
 > "Attach the spending limit policy to my Privy wallet"
 

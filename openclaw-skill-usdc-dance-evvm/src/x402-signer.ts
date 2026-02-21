@@ -1,5 +1,5 @@
 /**
- * x402 Protocol (EIP-3009) Signature Generator
+ * x402 Protocol (EIP-3009) Signature Generator for USDC Krump (USDC.k) payments on Story Aeneid EVVM
  */
 
 import { ethers } from 'ethers';
@@ -58,6 +58,7 @@ export async function generateX402Signature(
   const signer = new ethers.Wallet(privateKey);
   const verifyingContract = (explicitVerifyingContract ?? usdcDanceAddress) as `0x${string}`;
 
+  // EIP-712 name must match EVVMNativeX402Adapter on-chain ("USDC Dance") for signature verification
   const domain = {
     name: 'USDC Dance',
     version: '1',

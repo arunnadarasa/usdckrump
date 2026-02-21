@@ -1,0 +1,124 @@
+const hre = require("hardhat");
+const fs = require("fs");
+
+async function main() {
+  console.log("🧪 Testing OAppProxyOFT bridge\n");
+
+  const network = await hre.ethers.provider.getNetwork();
+  const [signer] = await hre.ethers.getSigners();
+
+  // Load deployment
+  const deployment = JSON.parse(
+    fs.readFileSync(`deployments/oapp-proxy-oft-${network.name}-latest.json`, "utf8")
+  );
+
+  console.log("Network:", network.name);
+  console.log("OAppProxyOFT:", deployment.oappProxyOft);
+  console.log("Wrapped Token:", deployment.wrappedToken);
+  console.log("Signer:", signer.address);
+
+  const proxyOft = await hre.ethers.getContractAt(
+    "OAppProxyOFT",
+    deployment.oappProxyOft
+  );
+  const usdc = await hre.ethers.getContractAt(
+    "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+    deployment.wrappedToken
+  );
+
+  // Check balances
+  const usdcBalance = await usdc.balanceOf(signer.address);
+  console.log("\n💰 USDC Balance:", hre.ethers.formatUnits(usdcBalance, 6), "USDC");
+
+  if (usdcBalance === 0n) {
+    console.log("⚠️  No USDC balance. Please get some USDC first.");
+    return;
+  }
+
+  // Check approval
+  const allowance = await usdc.allowance(signer.address, deployment.oappProxyOft);
+  console.log("   Approval:", hre.ethers.formatUnits(allowance, 6), "USDC");
+
+  // Test amount (0.1 USDC)
+  const amount = hre.ethers.parseUnits("0.1", 6);
+  const dstEid = network.chainId === 84532n ? 1315 : 40245; // Story Aeneid or Base Sepolia
+  const recipient = hre.ethers.zeroPadValue(signer.address, 32);
+
+  console.log("\n📤 Testing quote...");
+  try {
+    const quote = await proxyOft.quote(
+      {
+        dstEid: dstEid,
+        to: recipient,
+        amountLD: amount,
+        minAmountLD: amount,
+        extraOptions: "0x",
+        composeMsg: "0x",
+        oftCmd: "0x",
+      },
+      false
+    );
+
+    console.log("   ✅ Quote successful!");
+    console.log("   Native Fee:", hre.ethers.formatEther(quote.nativeFee), "ETH");
+    console.log("   LZ Token Fee:", hre.ethers.formatEther(quote.lzTokenFee), "LZ");
+  } catch (error) {
+    console.log("   ❌ Quote failed:", error.message);
+    return;
+  }
+
+  // If approval is insufficient, approve
+  if (allowance < amount) {
+    console.log("\n🔐 Approving USDC...");
+    const approveTx = await usdc.approve(deployment.oappProxyOft, amount);
+    await approveTx.wait();
+    console.log("   ✅ Approved");
+  }
+
+  console.log("\n📤 Sending cross-chain transfer...");
+  console.log("   Amount:", hre.ethers.formatUnits(amount, 6), "USDC");
+  console.log("   Destination EID:", dstEid);
+  console.log("   Recipient:", signer.address);
+
+  try {
+    const quote = await proxyOft.quote(
+      {
+        dstEid: dstEid,
+        to: recipient,
+        amountLD: amount,
+        minAmountLD: amount,
+        extraOptions: "0x",
+        composeMsg: "0x",
+        oftCmd: "0x",
+      },
+      false
+    );
+
+    const sendTx = await proxyOft.send(
+      {
+        dstEid: dstEid,
+        to: recipient,
+        amountLD: amount,
+        minAmountLD: amount,
+        extraOptions: "0x",
+        composeMsg: "0x",
+        oftCmd: "0x",
+      },
+      quote,
+      signer.address,
+      { value: quote.nativeFee }
+    );
+
+    const receipt = await sendTx.wait();
+    console.log("   ✅ Transfer initiated!");
+    console.log("   Tx Hash:", receipt.hash);
+    console.log("\n⏳ Wait for LayerZero to deliver the message...");
+  } catch (error) {
+    console.log("   ❌ Transfer failed:", error.message);
+  }
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

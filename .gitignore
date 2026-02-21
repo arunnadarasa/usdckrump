@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Hardhat and build
+cache/
+artifacts/
+typechain-types/
+deployments/*-*.json
+!deployments/*-latest.json
+
+# IDE and tools
+.cursor/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and debug
+*.log
+.cursor/debug.log
+logs/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

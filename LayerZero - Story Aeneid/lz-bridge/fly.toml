@@ -1,0 +1,21 @@
+# fly.toml app configuration file generated for usdckrump-relayer on 2026-02-20T09:05:10Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'usdckrump-relayer'
+primary_region = 'lhr'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  # Override BASE_SEPOLIA_RPC via: fly secrets set BASE_SEPOLIA_RPC=https://base-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+  BASE_SEPOLIA_RPC = 'https://base-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY'
+  STORY_AENEID_RPC = 'https://aeneid.storyrpc.io'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024

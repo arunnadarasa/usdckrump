@@ -1,0 +1,18 @@
+# fly.toml – LayerZero Executor Worker for USDCKrumpOFT
+# Separate from custom bridge relayer - handles LayerZero V2 OFT messages
+# Deploy: flyctl secrets set LZ_EXECUTOR_KEY="0x..." BASE_SEPOLIA_RPC="https://..." && flyctl deploy -c fly-lz-executor.toml
+
+app = 'usdckrump-lz-executor'
+primary_region = 'lhr'
+
+[build]
+  dockerfile = 'Dockerfile.lz-executor'
+
+[env]
+  STORY_AENEID_RPC = 'https://aeneid.storyrpc.io'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024
